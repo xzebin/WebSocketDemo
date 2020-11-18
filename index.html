@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>layout 后台大布局 - Layui</title>
+  <link rel="stylesheet" href="./layui/css/layui.css">
+  <link rel="icon" href="https://oss.tool.lu/cache/202011/16/085013iuoieniuo14irdn2.jpg.icon.ico" mce_href="https://oss.tool.lu/cache/202011/16/085013iuoieniuo14irdn2.jpg.icon.ico" type="image/x-icon">
+  <style>
+      .infoImg{
+          width: 40px;
+          height: 40px;
+          margin: 10px;
+      }
+      .infoImg2{
+          width: 80px;
+          height: 80px;
+      }
+      .infoName2{
+          font-size: 20px;
+      }
+      .info{
+        width: 90vw;
+        height: 50vh;
+        border: 1px solid black;
+        text-align: center;
+        font-size: 16px;
+        overflow: auto;
+      }
+      textarea{ 
+          resize:none;
+          width: 90vw;
+          height: 20vh;
+          padding: 20px;
+        }
+        .sendMsg{
+            width: 200px;
+            height: 50px;
+            font-size: 20px;
+            float: right;
+        }
+  </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">
+        <img class="infoImg" src="./imgs/1.png" alt="">
+        <span class="infoName">aa</span>
+    </div>
+  </div>
+  
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <div style="text-align: center;margin: 10px;font-weight: 700;font-size: 16px;">用户列表</div>
+      <div class="item">
+        <img class="infoImg infoImg2" src="./imgs/1.png" alt="">
+        <span class="infoName infoName2">aa</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div style="padding: 15px;">
+        <div class="peopleNum" style="text-align: center;font-size: 20px;margin: 10px;font-weight: 600;"></div>
+        <div class="info">
+
+        </div>
+        <div class="content">
+            <textarea name="" id="message" cols="30"  rows="10"></textarea>
+            <button class="sendMsg">发送</button>
+        </div>
+    </div>
+  </div>
+  
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © layui.com - 底部固定区域
+  </div>
+</div>
+</body>
+<script type="text/javascript">
+    var infoImg = document.getElementsByClassName("infoImg")[0];
+    var infoImg2 = document.getElementsByClassName("infoImg")[1];
+    var infoName = document.getElementsByClassName("infoName")[0];
+    var infoName2 = document.getElementsByClassName("infoName")[1];
+    var params = location.search.substring(1).split("&");
+    var name = params[0].split("=")[1];
+    var img = params[1].split("=")[1];
+    infoImg.src = img;
+    infoImg2.src = img;
+    infoName.innerHTML = name;
+    infoName2.innerHTML = name;
+
+    
+    var info = document.getElementsByClassName("info")[0];
+    var content = document.getElementsByClassName("content")[0];
+    var sendMsg = document.getElementsByClassName("sendMsg")[0];
+    var peopleNum = document.getElementsByClassName("peopleNum")[0];
+    var message = document.getElementById("message");
+    
+    
+    var socket = new WebSocket("ws://chatserver.xzebin.com:3344");
+    var length = 0;
+    socket.onmessage = function(event) {
+        if(event.data.indexOf("离开聊天室啦") > -1){
+            length = length - 1;
+            num = length;
+        }else{
+            var num = event.data.split("*")[1];
+            length = num;
+        }
+        var data = event.data.split("*")[0];
+        console.log(num);
+        peopleNum.innerHTML = `聊天人数(${num})`;
+        info.innerHTML = "<br />" + "<span style='color:block'>" + info.innerHTML + data + "</span>" +"<br />";
+    };
+    socket.addEventListener("open",function(){
+        var str = "<br />" + "<span style='color:green'>" +name + "加入聊天室啦" + "</span>" +"<br />";
+        socket.send(str);
+    });
+
+    sendMsg.onclick = function(){
+        socket.send(JSON.stringify({"name":name,"value":message.value}));
+        message.value = "";
+    }
+
+    window.onunload = function(){
+        let str = "<br />" + "<span style='color:red'>" + name + "离开聊天室啦" + "</span>";
+        length = length - 1;
+        peopleNum.innerHTML = `聊天室(${length})`;
+        socket.send(str);
+    }
+    
+</script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+        }
+        .container{
+            width: 100vw;
+            height: 100vh;
+            background-color: #ccc;
+            /* overflow: hidden; */
+            padding-top: 1px;
+        }
+        .info{
+            width: 500px;
+            height: 400px;
+            margin: 200px auto;
+            border: 1px solid black;
+            text-align: center;
+        }
+        .imgs{
+            margin: 50px 0;
+        }
+        .name{
+            text-align: center;
+            margin: 10px;
+        }
+        img{
+            margin: 10px;
+            width: 58px;
+            height: 58px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .come{
+            margin: 10px auto;
+        }
+        .public{
+            border: 1px solid red;
+        }
+        .logo{
+            margin:  0 auto;
+            font-weight: 700;
+            color: rgb(57, 57, 109);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="info">
+            <form class="" report-submit="false" bindsubmit="" bindreset="">
+                <div class="logo">
+                    欢迎使用随便聊
+                </div>
+                <div class="name">
+                    <input type="text" placeholder="请输入你的名字" maxlength="5">
+                </div>
+                <div class="imgs">
+                    <img src="./imgs/1.png" class="public" alt="" flag="1">
+                    <img src="./imgs/2.jpg" alt="" flag="2">
+                    <img src="./imgs/3.jpg" alt="" flag="3">
+                    <img src="./imgs/4.jpg" alt="" flag="4">
+                    <img src="./imgs/5.webp" alt="" flag="5">
+                    <img src="./imgs/6.png" alt="" flag="6">
+                    <img src="./imgs/7.png" alt="" flag="7">
+                    <img src="./imgs/8.jpg" alt="" flag="8">
+                    <img src="./imgs/9.png" alt="" flag="9">
+                    <img src="./imgs/10.jpg" alt="" flag="10">
+                    <img src="./imgs/11.jpg" alt="" flag="11">
+                    <img src="./imgs/12.jpg" alt="" flag="12">
+                </div>
+            </form>
+            <div class="come">
+                <button>进入聊天</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+    var imgs = document.getElementsByClassName("imgs")[0];
+    var button = document.getElementsByTagName("button")[0];
+    var current = document.getElementsByTagName("img")[0];
+    var input = document.getElementsByTagName("input")[0];
+    $(imgs).on("click",function(e){
+        if(e.target.localName == "div"){
+            return ;
+        }
+        var items = imgs.children;
+        for (let index = 0; index < items.length; index++) {
+            var element = items[index];
+            element.classList.remove("public");
+        }
+        var currenteImg = e.target;
+        currenteImg.classList.add("public");
+        current = currenteImg;
+    })
+    button.onclick = function(){
+        if(input.value.trim() == ""){
+            alert("用户名不能为空");
+            return ;
+        }
+        console.log(current);
+        console.log(input.value.trim());
+        alert("成功进入随便聊");
+        location.href = `http://127.0.0.1:5500/index.html?name=${input.value.trim()}&img=${current.src}`;
+    }
+</script>
+</html>
